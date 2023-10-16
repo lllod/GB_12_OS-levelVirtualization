@@ -1,0 +1,15 @@
+Задание 1:
+1) запустить контейнер с ubuntu, используя механизм LXC
+2) ограничить контейнер 256 Мб ОЗУ и проверить, что ограничение работает
+3) добавить автозапуск контейнеру, перезагрузить ОС и убедиться, что контейнер действительно запустился самостоятельно
+4) при создании указать файл, куда записывать логи
+5) после перезагрузки проанализировать логи
+
+
+lllod@gb-ubuntu-l12:~$ sudo apt install lxc debootstrap bridge-utils lxc-templates
+lllod@gb-ubuntu-l12:~$ sudo lxc-start -n test123
+lllod@gb-ubuntu-l12:~$ sudo lxc-attach -n test123
+lllod@gb-ubuntu-l12:~$ sudo free -m
+lllod@gb-ubuntu-l12:~$ sudo lxc-cgroup -n test123 memory.max 256M
+lllod@gb-ubuntu-l12:~$ sudo lxc-attach -n test123
+lllod@gb-ubuntu-l12:~$ sudo free -m
