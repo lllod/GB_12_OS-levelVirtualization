@@ -1,0 +1,129 @@
+1) запустить контейнер с БД mariaDB, используя инструкции на сайте: https://hub.docker.com/
+2) добавить в контейнер hostname такой же, как hostname системы через переменную
+3) заполнить БД данными через консоль
+4) запустить phpmyadmin (в контейнере) и через веб проверить, что все введенные данные доступны
+5)* (не обязательно) натсроить связку postgresql + adminer
+
+
+lllod@gb-ubuntu-l12:~$ sudo apt-get update
+lllod@gb-ubuntu-l12:~$ sudo apt-get install ca-certificate curl gnupg
+lllod@gb-ubuntu-l12:~$ sudo install -m 0755 -d /etc/apt/keyrings
+lllod@gb-ubuntu-l12:~$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+lllod@gb-ubuntu-l12:~$ sudo chmod a+r /etc/apt/keyrings/docker.gpg
+lllod@gb-ubuntu-l12:~$ echo \
+>   "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+>   "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+>   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+lllod@gb-ubuntu-l12:~$ sudo apt-get update
+lllod@gb-ubuntu-l12:~$ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+lllod@gb-ubuntu-l12:~$ sudo docker run hello-world
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+719385e32844: Pull complete
+Digest: sha256:88ec0acaa3ec199d3b7eaf73588f4518c25f9d34f58ce9a0df68429c5af48e8d
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+lllod@gb-ubuntu-l12:~$ sudo docker ps -a
+CONTAINER ID   IMAGE         COMMAND    CREATED          STATUS                      PORTS     NAMES
+f1b3fa6f6d5f   hello-world   "/hello"   29 seconds ago   Exited (0) 29 seconds ago             gallant_napier
+0a7044171239   hello-world   "/hello"   35 seconds ago   Exited (0) 33 seconds ago             wizardly_shockley
+lllod@gb-ubuntu-l12:~$ sudo docker run --name postgres-gb -e POSTGRES_PASSWORD=Qwerty123+ -d postgres
+lllod@gb-ubuntu-l12:~$ sudo docker ps -a
+CONTAINER ID   IMAGE         COMMAND                  CREATED              STATUS                     PORTS      NAMES
+f0e96c0a6932   postgres      "docker-entrypoint.s…"   About a minute ago   Up About a minute          5432/tcp   postgres-gb
+f1b3fa6f6d5f   hello-world   "/hello"                 9 minutes ago        Exited (0) 9 minutes ago              gallant_napier
+0a7044171239   hello-world   "/hello"                 9 minutes ago        Exited (0) 9 minutes ago              wizardly_shockley
+lllod@gb-ubuntu-l12:~$ sudo docker exec -it postgres-gb bash
+root@f0e96c0a6932:/# postgres --version
+postgres (PostgreSQL) 16.0 (Debian 16.0-1.pgdg120+1)
+root@f0e96c0a6932:/# psql -U postgres -d postgres
+psql (16.0 (Debian 16.0-1.pgdg120+1))
+Type "help" for help.
+
+postgres=# select version();
+                                                       version
+---------------------------------------------------------------------------------------------------------------------
+ PostgreSQL 16.0 (Debian 16.0-1.pgdg120+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14) 12.2.0, 64-bit
+(1 row)
+
+postgres=# \l
+                                                      List of databases
+   Name    |  Owner   | Encoding | Locale Provider |  Collate   |   Ctype    | ICU Locale | ICU Rules |   Access privile
+ges
+-----------+----------+----------+-----------------+------------+------------+------------+-----------+-----------------
+------
+ postgres  | postgres | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           |
+ template0 | postgres | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           | =c/postgres
+     +
+           |          |          |                 |            |            |            |           | postgres=CTc/pos
+tgres
+ template1 | postgres | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           | =c/postgres
+     +
+           |          |          |                 |            |            |            |           | postgres=CTc/pos
+tgres
+(3 rows)
+
+postgres=# CREATE DATABASE testgb;
+CREATE DATABASE
+postgres=# SELECT datname FROM pg_database;
+  datname
+-----------
+ postgres
+ testgb
+ template1
+ template0
+(4 rows)
+
+postgres=# \c testgb
+You are now connected to database "testgb" as user "postgres".
+testgb=# create table firsttable (id int, some_text varchar(10));
+CREATE TABLE
+testgb=# insert into firsttable values (1, 'first'), (2, 'second');
+INSERT 0 2
+testgb=# select * from firsttable;
+ id | some_text
+----+-----------
+  1 | first
+  2 | second
+(2 rows)
+
+testgb=# \dt
+           List of relations
+ Schema |    Name    | Type  |  Owner
+--------+------------+-------+----------
+ public | firsttable | table | postgres
+(1 row)
+
+testgb=# exit
+root@f0e96c0a6932:/# exit
+
+lllod@gb-ubuntu-l12:~$ sudo docker run --name adminer-gb -d --link postgres-gb:db -p 5432:8080 adminer
+lllod@gb-ubuntu-l12:~$ sudo docker ps -a
+CONTAINER ID   IMAGE         COMMAND                  CREATED          STATUS                      PORTS                                       NAMES
+4bb1be055e03   adminer       "entrypoint.sh php -…"   8 seconds ago    Up 2 seconds                0.0.0.0:5432->8080/tcp, :::5432->8080/tcp   adminer-gb
+f0e96c0a6932   postgres      "docker-entrypoint.s…"   26 minutes ago   Up 26 minutes               5432/tcp                                    postgres-gb
+f1b3fa6f6d5f   hello-world   "/hello"                 34 minutes ago   Exited (0) 34 minutes ago                                               gallant_napier
+0a7044171239   hello-world   "/hello"                 34 minutes ago   Exited (0) 34 minutes ago                                               wizardly_shockley
+lllod@gb-ubuntu-l12:~$
+
