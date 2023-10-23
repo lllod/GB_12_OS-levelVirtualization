@@ -1,0 +1,57 @@
+Задание: необходимо создать Dockerfile, основанный на любом образе (вы в праве выбрать самостоятельно).
+В него необходимо поместить приложение, написанное на любом известном вам языке программирования (Python, Java, C, С#, C++).
+При запуске контейнера должно запускаться самостоятельно написанное приложение.
+
+
+lllod@gb-ubuntu-l12:~$ pwd
+/home/lllod
+lllod@gb-ubuntu-l12:~$ mkdir seminar4
+lllod@gb-ubuntu-l12:~$ cd seminar4/
+lllod@gb-ubuntu-l12:~/seminar4$ nano main.py
+lllod@gb-ubuntu-l12:~/seminar4$ cat main.py
+print("It's work!")
+lllod@gb-ubuntu-l12:~/seminar4$ nano Dockerfile
+lllod@gb-ubuntu-l12:~/seminar4$ cat Dockerfile
+FROM alpine:latest
+FROM python:latest
+ADD main.py /
+CMD [ "python", "./main.py" ]
+
+lllod@gb-ubuntu-l12:~/seminar4$ sudo docker build -t seminar4_image:latest .
+[+] Building 49.1s (7/7) FINISHED                                                                        docker:default
+ => [internal] load build definition from Dockerfile                                                               0.0s
+ => => transferring dockerfile: 120B                                                                               0.0s
+ => [internal] load .dockerignore                                                                                  0.0s
+ => => transferring context: 2B                                                                                    0.0s
+ => [internal] load metadata for docker.io/library/python:latest                                                   4.8s
+ => [internal] load build context                                                                                  0.0s
+ => => transferring context: 54B                                                                                   0.0s
+ => [stage-1 1/2] FROM docker.io/library/python:latest@sha256:2586dd7abe015eeb6673bc66d18f0a628a997c293b41268bc9  37.8s
+ => => resolve docker.io/library/python:latest@sha256:2586dd7abe015eeb6673bc66d18f0a628a997c293b41268bc981e826bc0  0.1s
+ => => sha256:800d84653581fc119cd75cd572fa190d3b813d49221b9e5ee463e3560e2cb342 64.13MB / 64.13MB                  10.3s
+ => => sha256:833b16f07978d42d8005190eb2d00c74c63ad9c8aad12c83c9c45c7fc7a79903 2.01kB / 2.01kB                     0.0s
+ => => sha256:17e65561fd2c7ecae6297c2cc049960607ff94f92f6a1ca3857f94569fc9c199 7.30kB / 7.30kB                     0.0s
+ => => sha256:0a9573503463fd3166b5b1f34a7720dac28609e98d731e50e7068f92e79b8545 49.58MB / 49.58MB                   8.8s
+ => => sha256:2586dd7abe015eeb6673bc66d18f0a628a997c293b41268bc981e826bc0b5a92 2.14kB / 2.14kB                     0.0s
+ => => sha256:1ccc26d841b4acc2562483bf393ce1cf8bc358ced09ccd825425226827c79c92 24.05MB / 24.05MB                   3.3s
+ => => sha256:7c632e57ea62ea950c367f484f52cdcfd2adb12060a31f5c413f40db9822e96e 211.06MB / 211.06MB                22.8s
+ => => sha256:f9a1922eee8a7d8ea8d227102bf5b6671dd4f68a152a438c803c54092410bb28 6.39MB / 6.39MB                    13.1s
+ => => extracting sha256:0a9573503463fd3166b5b1f34a7720dac28609e98d731e50e7068f92e79b8545                          3.3s
+ => => sha256:7c45daddd450da82621d3670e1862f4b8a0da6a7a2fd7b3d123689bd9bb14850 22.51MB / 22.51MB                  16.4s
+ => => extracting sha256:1ccc26d841b4acc2562483bf393ce1cf8bc358ced09ccd825425226827c79c92                          1.1s
+ => => sha256:0952bd8ba4ecedd2507f098cb24a60895729d644dfef9b7240bee40c07910e0e 242B / 242B                        13.4s
+ => => sha256:53f1aa318bc254e7f5959dde9c681dc97b1ccca2094b668fecbb806c8b580ce8 2.67MB / 2.67MB                    15.1s
+ => => extracting sha256:800d84653581fc119cd75cd572fa190d3b813d49221b9e5ee463e3560e2cb342                          4.6s
+ => => extracting sha256:7c632e57ea62ea950c367f484f52cdcfd2adb12060a31f5c413f40db9822e96e                          8.5s
+ => => extracting sha256:f9a1922eee8a7d8ea8d227102bf5b6671dd4f68a152a438c803c54092410bb28                          0.7s
+ => => extracting sha256:7c45daddd450da82621d3670e1862f4b8a0da6a7a2fd7b3d123689bd9bb14850                          0.8s
+ => => extracting sha256:0952bd8ba4ecedd2507f098cb24a60895729d644dfef9b7240bee40c07910e0e                          0.0s
+ => => extracting sha256:53f1aa318bc254e7f5959dde9c681dc97b1ccca2094b668fecbb806c8b580ce8                          0.3s
+ => [stage-1 2/2] ADD main.py /                                                                                    6.3s
+ => exporting to image                                                                                             0.1s
+ => => exporting layers                                                                                            0.1s
+ => => writing image sha256:1de880fce44e9784ea720e6024cd21e333b3c6000db784f2baad8e1fc688eac4                       0.0s
+ => => naming to docker.io/library/seminar4_image:latest                                                           0.0s
+lllod@gb-ubuntu-l12:~/seminar4$ sudo docker run seminar4_image:latest
+It's work!
+lllod@gb-ubuntu-l12:~/seminar4$
