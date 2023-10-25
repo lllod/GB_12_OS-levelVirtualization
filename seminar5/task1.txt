@@ -1,0 +1,238 @@
+Задание 1:
+1) создать docker compose файл, состоящий из 2 различных контейнеров: 1 - веб, 2 - БД
+2) запустить docker compose файл
+3) по итогу на БД контейнере должно быть 2 реплики, на админере должна быть 1 реплика. Всего должно получиться 3 контейнера
+4) выводы зафиксировать
+
+lllod@2107891-cm79673:~$ pwd
+/home/lllod
+lllod@2107891-cm79673:~$ mkdir gb-seminar5
+lllod@2107891-cm79673:~$ cd gb-seminar5/
+lllod@2107891-cm79673:~/gb-seminar5$ nano docker-compose.yml
+lllod@2107891-cm79673:~/gb-seminar5$ cat docker-compose.yml
+version: "3.2"
+
+services:
+  db:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - storage:/var/lib/mysql
+    deploy:
+      mode: replicated
+      replicas: 2
+    networks:
+      - net
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    networks:
+      - net
+    deploy:
+      mode: replicated
+      replicas: 1
+
+volumes:
+  storage:
+
+networks:
+  net:
+    driver: bridge
+
+lllod@2107891-cm79673:~/gb-seminar5$ sudo docker compose up
+[+] Running 17/17
+ ✔ adminer 7 layers [⣿⣿⣿⣿⣿⣿⣿]      0B/0B      Pulled                                                              27.0s
+   ✔ 69b3efbf67c2 Pull complete                                                                                   16.1s
+   ✔ 3a0fdd089fb3 Pull complete                                                                                   10.6s
+   ✔ 689786b0c396 Pull complete                                                                                    0.5s
+   ✔ 6bcf42cdb6b5 Pull complete                                                                                    1.5s
+   ✔ d507b34ef5ac Pull complete                                                                                    2.1s
+   ✔ 04b8d4f964a8 Pull complete                                                                                    2.9s
+   ✔ 7a75f8703cd7 Pull complete                                                                                    3.5s
+ ✔ db 8 layers [⣿⣿⣿⣿⣿⣿⣿⣿]      0B/0B      Pulled                                                                  29.5s
+   ✔ 43f89b94cd7d Pull complete                                                                                    7.3s
+   ✔ dfb413a01c7e Pull complete                                                                                    7.9s
+   ✔ 1d3f76b535d3 Pull complete                                                                                    9.2s
+   ✔ f7efd05ec01e Pull complete                                                                                    9.8s
+   ✔ fe2ff83c75df Pull complete                                                                                   10.4s
+   ✔ 50ee0c078c93 Pull complete                                                                                   19.0s
+   ✔ 6975e72928bb Pull complete                                                                                   11.3s
+   ✔ 561d1b426cbd Pull complete                                                                                   12.1s
+[+] Running 5/5
+ ✔ Network gb-seminar5_net          Created                                                                        0.1s
+ ✔ Volume "gb-seminar5_storage"     Created                                                                        0.0s
+ ✔ Container gb-seminar5-adminer-1  Created                                                                        0.5s
+ ✔ Container gb-seminar5-db-2       Created                                                                        0.5s
+ ✔ Container gb-seminar5-db-1       Created                                                                        0.5s
+Attaching to gb-seminar5-adminer-1, gb-seminar5-db-1, gb-seminar5-db-2
+gb-seminar5-db-1       | 2023-10-25 06:11:27+00:00 [Note] [Entrypoint]: Entrypoint script for MariaDB Server 1:11.1.2+maria~ubu2204 started.
+gb-seminar5-adminer-1  | [Wed Oct 25 06:11:27 2023] PHP 7.4.33 Development Server (http://[::]:8080) started
+gb-seminar5-db-2       | 2023-10-25 06:11:28+00:00 [Note] [Entrypoint]: Entrypoint script for MariaDB Server 1:11.1.2+maria~ubu2204 started.
+gb-seminar5-db-1       | 2023-10-25 06:11:28+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+gb-seminar5-db-1       | 2023-10-25 06:11:28+00:00 [Note] [Entrypoint]: Entrypoint script for MariaDB Server 1:11.1.2+maria~ubu2204 started.
+gb-seminar5-db-2       | 2023-10-25 06:11:28+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+gb-seminar5-db-2       | 2023-10-25 06:11:28+00:00 [Note] [Entrypoint]: Entrypoint script for MariaDB Server 1:11.1.2+maria~ubu2204 started.
+gb-seminar5-db-1       | 2023-10-25 06:11:28+00:00 [Note] [Entrypoint]: Initializing database files
+gb-seminar5-db-2       | 2023-10-25 06:11:29+00:00 [Note] [Entrypoint]: Initializing database files
+gb-seminar5-db-2       | 2023-10-25  6:11:29 0 [ERROR] mariadbd: Can't lock aria control file '/var/lib/mysql/aria_log_control' for exclusive use, error: 11. Will retry for 30 seconds
+gb-seminar5-db-1       |
+gb-seminar5-db-1       |
+gb-seminar5-db-1       | PLEASE REMEMBER TO SET A PASSWORD FOR THE MariaDB root USER !
+gb-seminar5-db-1       | To do so, start the server, then issue the following command:
+gb-seminar5-db-1       |
+gb-seminar5-db-1       | '/usr/bin/mariadb-secure-installation'
+gb-seminar5-db-1       |
+gb-seminar5-db-1       | which will also give you the option of removing the test
+gb-seminar5-db-1       | databases and anonymous user created by default.  This is
+gb-seminar5-db-1       | strongly recommended for production servers.
+gb-seminar5-db-1       |
+gb-seminar5-db-1       | See the MariaDB Knowledgebase at https://mariadb.com/kb
+gb-seminar5-db-1       |
+gb-seminar5-db-1       | Please report any problems at https://mariadb.org/jira
+gb-seminar5-db-1       |
+gb-seminar5-db-1       | The latest information about MariaDB is available at https://mariadb.org/.
+gb-seminar5-db-1       |
+gb-seminar5-db-1       | Consider joining MariaDB's strong and vibrant community:
+gb-seminar5-db-1       | https://mariadb.org/get-involved/
+gb-seminar5-db-1       |
+gb-seminar5-db-1       | 2023-10-25 06:11:34+00:00 [Note] [Entrypoint]: Database files initialized
+gb-seminar5-db-1       | 2023-10-25 06:11:34+00:00 [Note] [Entrypoint]: Starting temporary server
+gb-seminar5-db-1       | 2023-10-25 06:11:34+00:00 [Note] [Entrypoint]: Waiting for server startup
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] Starting MariaDB 11.1.2-MariaDB-1:11.1.2+maria~ubu2204 source revision 9bc25d98209df6810f7a7d5e7dd3ae677a313ab5 as process 93
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] InnoDB: Number of transaction pools: 1
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] InnoDB: Using crc32 + pclmulqdq instructions
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] mariadbd: O_TMPFILE is not supported on /tmp (disabling future attempts)
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] InnoDB: Initializing buffer pool, total size = 128.000MiB, chunk size = 2.000MiB
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] InnoDB: Completed initialization of buffer pool
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] InnoDB: File system buffers for log disabled (block size=512 bytes)
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] InnoDB: End of log at LSN=47279
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] InnoDB: Opened 3 undo tablespaces
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] InnoDB: 128 rollback segments in 3 undo tablespaces are active.
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] InnoDB: Setting file './ibtmp1' size to 12.000MiB. Physically writing the file full; Please wait ...
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] InnoDB: File './ibtmp1' size is now 12.000MiB.
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] InnoDB: log sequence number 47279; transaction id 14
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] Plugin 'FEEDBACK' is disabled.
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] Plugin 'wsrep-provider' is disabled.
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Warning] 'user' entry 'root@c90dfe322d15' ignored in --skip-name-resolve mode.
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Warning] 'proxies_priv' entry '@% root@c90dfe322d15' ignored in --skip-name-resolve mode.
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] mariadbd: Event Scheduler: Loaded 0 events
+gb-seminar5-db-1       | 2023-10-25  6:11:34 0 [Note] mariadbd: ready for connections.
+gb-seminar5-db-1       | Version: '11.1.2-MariaDB-1:11.1.2+maria~ubu2204'  socket: '/run/mysqld/mysqld.sock'  port: 0  mariadb.org binary distribution
+gb-seminar5-db-1       | 2023-10-25 06:11:35+00:00 [Note] [Entrypoint]: Temporary server started.
+gb-seminar5-db-1       | 2023-10-25 06:11:37+00:00 [Note] [Entrypoint]: Securing system users (equivalent to running mysql_secure_installation)
+gb-seminar5-db-1       |
+gb-seminar5-db-1       | 2023-10-25 06:11:37+00:00 [Note] [Entrypoint]: Stopping temporary server
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] mariadbd (initiated by: unknown): Normal shutdown
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: FTS optimize thread exiting.
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: Starting shutdown...
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: Dumping buffer pool(s) to /var/lib/mysql/ib_buffer_pool
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: Buffer pool(s) dump completed at 231025  6:11:37
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: Removed temporary tablespace data file: "./ibtmp1"
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: Shutdown completed; log sequence number 47279; transaction id 15
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] mariadbd: Shutdown complete
+gb-seminar5-db-1       |
+gb-seminar5-db-1       | 2023-10-25 06:11:37+00:00 [Note] [Entrypoint]: Temporary server stopped
+gb-seminar5-db-1       |
+gb-seminar5-db-1       | 2023-10-25 06:11:37+00:00 [Note] [Entrypoint]: MariaDB init process done. Ready for start up.
+gb-seminar5-db-1       |
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] Starting MariaDB 11.1.2-MariaDB-1:11.1.2+maria~ubu2204 source revision 9bc25d98209df6810f7a7d5e7dd3ae677a313ab5 as process 1
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: Compressed tables use zlib 1.2.11
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: Number of transaction pools: 1
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: Using crc32 + pclmulqdq instructions
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] mariadbd: O_TMPFILE is not supported on /tmp (disabling future attempts)
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: Initializing buffer pool, total size = 128.000MiB, chunk size = 2.000MiB
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: Completed initialization of buffer pool
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: File system buffers for log disabled (block size=512 bytes)
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: End of log at LSN=47279
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: Opened 3 undo tablespaces
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: 128 rollback segments in 3 undo tablespaces are active.
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: Setting file './ibtmp1' size to 12.000MiB. Physically writing the file full; Please wait ...
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: File './ibtmp1' size is now 12.000MiB.
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: log sequence number 47279; transaction id 14
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: Loading buffer pool(s) from /var/lib/mysql/ib_buffer_pool
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] Plugin 'FEEDBACK' is disabled.
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] Plugin 'wsrep-provider' is disabled.
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] InnoDB: Buffer pool(s) load completed at 231025  6:11:37
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] Server socket created on IP: '0.0.0.0'.
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] Server socket created on IP: '::'.
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] mariadbd: Event Scheduler: Loaded 0 events
+gb-seminar5-db-1       | 2023-10-25  6:11:37 0 [Note] mariadbd: ready for connections.
+gb-seminar5-db-1       | Version: '11.1.2-MariaDB-1:11.1.2+maria~ubu2204'  socket: '/run/mysqld/mysqld.sock'  port: 3306  mariadb.org binary distribution
+gb-seminar5-db-2       | 2023-10-25  6:11:59 0 [ERROR] mariadbd: Got error 'Could not get an exclusive lock; file is probably in use by another process' when trying to use aria control file '/var/lib/mysql/aria_log_control'
+gb-seminar5-db-2       | 2023-10-25  6:11:59 0 [ERROR] Plugin 'Aria' registration as a STORAGE ENGINE failed.
+gb-seminar5-db-2       | 2023-10-25  6:11:59 0 [ERROR] InnoDB: Unable to lock ./ibdata1 error: 11
+gb-seminar5-db-2       | 2023-10-25  6:11:59 0 [ERROR] InnoDB: Plugin initialization aborted with error Generic error
+gb-seminar5-db-2       | 2023-10-25  6:11:59 0 [ERROR] Plugin 'InnoDB' registration as a STORAGE ENGINE failed.
+gb-seminar5-db-2       | 2023-10-25  6:11:59 0 [ERROR] Failed to initialize plugins.
+gb-seminar5-db-2       | 2023-10-25  6:11:59 0 [ERROR] Aborting
+gb-seminar5-db-2       |
+gb-seminar5-db-2       | Installation of system tables failed!  Examine the logs in
+gb-seminar5-db-2       | /var/lib/mysql/ for more information.
+gb-seminar5-db-2       |
+gb-seminar5-db-2       | The problem could be conflicting information in an external
+gb-seminar5-db-2       | my.cnf files. You can ignore these by doing:
+gb-seminar5-db-2       |
+gb-seminar5-db-2       |     shell> /usr/bin/mariadb-install-db --defaults-file=~/.my.cnf
+gb-seminar5-db-2       |
+gb-seminar5-db-2       | You can also try to start the mariadbd daemon with:
+gb-seminar5-db-2       |
+gb-seminar5-db-2       |     shell> /usr/sbin/mariadbd --skip-grant-tables --general-log &
+gb-seminar5-db-2       |
+gb-seminar5-db-2       | and use the command line tool /usr/bin/mariadb
+gb-seminar5-db-2       | to connect to the mysql database and look at the grant tables:
+gb-seminar5-db-2       |
+gb-seminar5-db-2       |     shell> /usr/bin/mariadb -u root mysql
+gb-seminar5-db-2       |     MariaDB> show tables;
+gb-seminar5-db-2       |
+gb-seminar5-db-2       | Try '/usr/sbin/mariadbd --help' if you have problems with paths.  Using
+gb-seminar5-db-2       | --general-log gives you a log in /var/lib/mysql/ that may be helpful.
+gb-seminar5-db-2       |
+gb-seminar5-db-2       | The latest information about mariadb-install-db is available at
+gb-seminar5-db-2       | https://mariadb.com/kb/en/installing-system-tables-mysql_install_db
+gb-seminar5-db-2       | You can find the latest source at https://downloads.mariadb.org and
+gb-seminar5-db-2       | the maria-discuss email list at https://launchpad.net/~maria-discuss
+gb-seminar5-db-2       |
+gb-seminar5-db-2       | Please check all of the above before submitting a bug report
+gb-seminar5-db-2       | at https://mariadb.org/jira
+gb-seminar5-db-2       |
+gb-seminar5-db-2 exited with code 1
+
+
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:54 2023] [::ffff:167.94.138.125]:50048 Accepted
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:55 2023] [::ffff:167.94.138.125]:50048 Invalid request (Connection reset by peer)
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:55 2023] [::ffff:167.94.138.125]:50048 Closing
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:55 2023] [::ffff:167.94.138.125]:60118 Accepted
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:56 2023] [::ffff:167.94.138.125]:60118 [200]: GET /
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:56 2023] [::ffff:167.94.138.125]:60118 Closing
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:56 2023] [::ffff:167.94.138.125]:36048 Accepted
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:57 2023] [::ffff:167.94.138.125]:36048 [200]: GET /
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:57 2023] [::ffff:167.94.138.125]:36048 Closing
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:57 2023] [::ffff:167.94.138.125]:58864 Accepted
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:57 2023] [::ffff:167.94.138.125]:58864 Invalid request (Malformed HTTP request)
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:57 2023] [::ffff:167.94.138.125]:58864 Closing
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:57 2023] [::ffff:167.94.138.125]:56470 Accepted
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:57 2023] [::ffff:167.94.138.125]:56470 [200]: GET /?file=favicon.ico&version=4.8.1
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:57 2023] [::ffff:167.94.138.125]:56470 Closing
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:57 2023] [::ffff:167.94.138.125]:57520 Accepted
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:57 2023] [::ffff:167.94.138.125]:57520 [404]: GET /favicon.ico - No such file or directory
+gb-seminar5-adminer-1  | [Wed Oct 25 06:18:57 2023] [::ffff:167.94.138.125]:57520 Closing
+gb-seminar5-adminer-1  | [Wed Oct 25 06:24:14 2023] [::ffff:198.235.24.196]:55366 Accepted
+gb-seminar5-adminer-1  | [Wed Oct 25 06:24:16 2023] [::ffff:198.235.24.196]:55366 [200]: GET /
+gb-seminar5-adminer-1  | [Wed Oct 25 06:24:16 2023] [::ffff:198.235.24.196]:55366 Closing
+gb-seminar5-adminer-1  | [Wed Oct 25 06:34:38 2023] [::ffff:84.54.51.190]:37852 Accepted
+gb-seminar5-adminer-1  | [Wed Oct 25 06:34:38 2023] [::ffff:84.54.51.190]:37852 [200]: CONNECT google.com:443
+gb-seminar5-adminer-1  | [Wed Oct 25 06:34:38 2023] [::ffff:84.54.51.190]:37852 Closing
+^Ccanceled
+lllod@2107891-cm79673:~/gb-seminar5$ ^C
+lllod@2107891-cm79673:~/gb-seminar5$ ^C
+lllod@2107891-cm79673:~/gb-seminar5$ sudo docker compose ps -a
+[sudo] password for lllod:
+NAME                    IMAGE     COMMAND                                             SERVICE   CREATED          STATUS                      PORTS
+gb-seminar5-adminer-1   adminer   "entrypoint.sh php -S [::]:8080 -t /var/www/html"   adminer   28 minutes ago   Up 28 minutes               0.0.0.0:8080->8080/tcp, :::8080->8080/tcp
+gb-seminar5-db-1        mariadb   "docker-entrypoint.sh mariadbd"                     db        28 minutes ago   Up 28 minutes               3306/tcp
+gb-seminar5-db-2        mariadb   "docker-entrypoint.sh mariadbd"                     db        28 minutes ago   Exited (1) 27 minutes ago
+lllod@2107891-cm79673:~/gb-seminar5$
